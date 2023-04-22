@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.rmi.CORBA.ValueHandler;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,17 +51,31 @@ public class CouponService {
         Response response = client.newCall(request).execute();
         String res= response.body().string();
         CouponResponse cr = om.readValue(res,CouponResponse.class);
-        ;
-        CouponDetails cd = new CouponDetails(cr.getpageProps().getCoupons().get(0).getCoupon_code(),cr.getpageProps().getCoupons().get(0).getDescription(),cr.getpageProps().getCoupons().get(0).getCompany_site());
 
-        return (cd.getCodeCoupon()+" | "+cd.getCouponDetails()+" | "+cd.getCompanySite());
-//        try {
-//            System.out.println(cr.getpageProps().getCoupons());
-//            return cr.getpageProps().getCoupons().get(1).getCouponCode();
-//        } catch (Exception e){
-//            e.printStackTrace();
-//            return "Not Found";
-//        }
+//        ArrayList<CouponDetails> couponList=new ArrayList<CouponDetails>(cr.getpageProps().getCoupons().size())
+
+        try {
+            String fullCoupom =" ";
+            ArrayList<CouponDetails> couponList=new ArrayList<CouponDetails>();
+
+            for (int i = 0; i <cr.getpageProps().getCoupons().size(); i++) {
+                couponList.add(new CouponDetails(cr.getpageProps().getCoupons().get(i).getCoupon_code(),
+                        cr.getpageProps().getCoupons().get(i).getDescription(),
+                        cr.getpageProps().getCoupons().get(i).getCompany_site()
+                ));
+            }
+
+            for (int i = 0; i < couponList.size(); i++) {
+                fullCoupom += couponList.get(i).getCodeCoupon().toString();
+                fullCoupom += " | " + couponList.get(i).getCouponDetails().toString();
+                fullCoupom += " | " + couponList.get(i).getCompanySite().toString();
+                fullCoupom += "\n";
+            }
+            return  fullCoupom;
+        } catch (Exception e){
+            e.printStackTrace();
+            return "Not Found";
+        }
 
 
     }
@@ -69,12 +84,14 @@ public class CouponService {
         String codeCoupon;
         String couponDetails;
         String companySite;
+        public CouponDetails(){}
 
         public CouponDetails(String codeCoupon, String couponDetails, String companySite) {
             this.codeCoupon = codeCoupon;
             this.couponDetails = couponDetails;
             this.companySite = companySite;
         }
+
 
         public String getCodeCoupon() {
             return codeCoupon;
