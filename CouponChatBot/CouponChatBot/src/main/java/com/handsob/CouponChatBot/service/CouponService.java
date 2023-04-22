@@ -104,6 +104,8 @@ public class CouponService {
         public String getCompanySite() {
             return companySite;
         }
+
+
     }
 
 
